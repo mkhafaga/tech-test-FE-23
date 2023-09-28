@@ -1,0 +1,12 @@
+.flexContainer {
+    display: flex;
+    background-color: DodgerBlue;
+    flex-direction: row;
+  }
+  
+  .flexContainer > div {
+    background-color: #f1f1f1;
+    /* margin: 20px;
+    padding: 20px; */
+    /* font-size: 30px; */
+  }

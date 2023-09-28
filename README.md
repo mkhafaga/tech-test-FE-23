@@ -1,50 +1,36 @@
-# Tech Test Brief
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Overview
+## Getting Started
 
-We are seeking a capable developer to build a front-end application using either React or Next.js, combined with TypeScript. Your choice of framework should be based on your preference and expertise. The application should closely align with the designs found in this [Figma file](https://www.figma.com/file/hGBI3zpyHia5yrWsgeMP3K/Untitled?node-id=0%3A1&mode=dev). It is essential that the application utilises Styled Components for styling.
+First, run the development server:
 
-## Technical Requirements
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-### General
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- The application must be developed using TypeScript.
-- Utilise Styled Components for styling the components in accordance with the Figma designs.
-- We often find the need to make slight alterations to the designs - please use your best judgement to make the necessary adjustments, particularly adding a column for usernames.
-- Implement a search functionality that allows for searching payouts based on various criteria, including username. Please see the API Integration section for more details, and as above tweak the designs as you see fit.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-### API Integration
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-You will be integrating with an existing API. Here are the details of the endpoints you will need to interact with:
+## Learn More
 
-1. **Payouts Endpoint**
+To learn more about Next.js, take a look at the following resources:
 
-   **Endpoint:** `https://theseus-staging.lithium.ventures/api/v1/analytics/tech-test/payouts`
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-   **Method:** GET
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-   **Description:** This endpoint retrieves a list of payouts. Each payout object contains the following fields:
+## Deploy on Vercel
 
-   - `dateAndTime`: A string representing the date and time of the payout.
-   - `status`: A string indicating the status of the payout (Pending or Completed).
-   - `value`: A string representing the value of the payout.
-   - `username`: A string representing the username associated with the payout.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-2. **Search Endpoint**
-
-   **Endpoint:** `https://theseus-staging.lithium.ventures/api/v1/analytics/tech-test/search?query=SEARCH_TERM`
-
-   **Method:** GET
-
-   **Description:** This endpoint allows for searching payouts by username. Implement a functionality that facilitates user search with a keen focus on optimizing the user experience whilst considering performance.
-
-## Evaluation Criteria
-
-- Adherence to the design as specified in the Figma file.
-- Proper usage of TypeScript and Styled Components.
-- Attention to detail in implementing various functionalities.
-- Optimizations implemented to enhance the user experience.
-
-## Submission
-
-Please fork this repository and submit your solution as a pull request. Please include a README file with instructions on how to run your application locally.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
