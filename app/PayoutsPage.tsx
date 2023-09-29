@@ -2,26 +2,20 @@
 import { TextField, alpha, styled } from '@mui/material';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-
-interface Payout {
-    id: number;
-    amount: number;
-    date: string;
-}
-
-interface PageState {
-    data: Payout[] | null;
-    total: number;
-    isLoading: boolean;
-    page: number;
-    pageSize: number;
-    searchText: string;
-    paginationMode: 'client' | 'server';
-}
-
+import { PageState, Payout, PayoutsWithMetadata } from './types/Payout';
+import { paginatePayouts, searchPayouts } from './services/PayoutsService';
 
 const columns = [
-    { field: 'username', headerName: 'User', flex: 1 },
+    {
+        field: 'username', headerName: 'User', flex: 1, renderCell: (params: any) => {
+            console.log('params is ', JSON.stringify(params.value));
+            return (<div>{(params.value) ? params.value : 'NA'}</div>);
+        }, renderHeader: (params: any) => {
+            return (
+                <div style={{ color: 'gray' }}>{params.colDef.headerName}</div>
+            );
+        }
+    },
     { field: 'dateAndTime', headerName: 'Date & Time', flex: 1 },
     { field: 'status', headerName: 'Status', flex: 1, renderCell: (params: any) => (<div style={{ color: params.value === 'Completed' ? 'green' : 'red' }}>{params.value}</div>) },
     { field: 'value', headerName: 'Value', flex: 1 },
@@ -63,11 +57,11 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 
-const GridLayout = () => {
+const PayoutsPage = () => {
 
-    const cache = useMemo(() => new Map<string, []>(), []);
+    const cache = useMemo(() => new Map<string, Payout[]>(), []);
     const [pageState, setPageState] = useState<PageState>({
-        data: null,
+        data: [] as Payout[],
         total: 0,
         isLoading: false,
         page: 0,
@@ -84,11 +78,9 @@ const GridLayout = () => {
         try {
             setPageState((prevState) => ({ ...prevState, isLoading: true }));
 
-            let endpoint = 'https://theseus-staging.lithium.ventures/api/v1/analytics/tech-test/payouts?page=' + (pageState.page + 1) + '&limit=' + pageState.pageSize;
             let paginationMode = 'server';
 
             if (pageState.searchText) {
-                endpoint = `https://theseus-staging.lithium.ventures/api/v1/analytics/tech-test/search?query=${pageState.searchText}`;
                 paginationMode = 'client';
             }
 
@@ -101,27 +93,29 @@ const GridLayout = () => {
                 }
             }
 
-            const response = await fetch(endpoint);
-            const data = await response.json();
 
             if (paginationMode === 'server') {
+                const paginatedData: PayoutsWithMetadata = await paginatePayouts(pageState.page + 1, pageState.pageSize);
                 setPageState((prevState) => ({
                     ...prevState,
-                    data: data.data,
-                    total: data.metadata.totalCount,
+                    data: paginatedData.data.map((payout, index) => ({ ...payout, id: index })),
+                    total: paginatedData.metadata.totalCount,
                     isLoading: false,
                     paginationMode,
                 }));
             } else {
-                cache.set(pageState.searchText, data);
+                const payoutSearchResults: Payout[] = await searchPayouts(pageState.searchText);
+                console.log('payoutSearchResults is ', JSON.stringify(payoutSearchResults));
+                cache.set(pageState.searchText, payoutSearchResults);
                 setPageState((prevState) => ({
                     ...prevState,
-                    data: data,
-                    total: data.length,
+                    data: payoutSearchResults.map((payout, index) => ({ ...payout, id: index })),
+                    total: payoutSearchResults.length,
                     isLoading: false,
                     paginationMode,
                 }));
             }
+
 
 
             console.log('data is ', JSON.stringify(data));
@@ -179,8 +173,8 @@ const GridLayout = () => {
                         paginationModel={{ page: pageState.page, pageSize: pageState.pageSize }}
                         pageSizeOptions={[10, 20, 30, 100]}
                         getRowId={(row) => {
-                            console.log('row is ', JSON.stringify(row));
-                            return row.username
+                            // console.log('row is ', JSON.stringify(row));
+                            return row.id
                         }}
                         onPaginationModelChange={(newModel) => {
                             console.log('newModel is ', newModel);
@@ -194,4 +188,4 @@ const GridLayout = () => {
         </div>
     );
 };
-export default GridLayout;
+export default PayoutsPage;
