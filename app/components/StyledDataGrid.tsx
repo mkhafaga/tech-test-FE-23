@@ -2,6 +2,8 @@ import { alpha, styled } from "@mui/material";
 import { DataGrid, GridCallbackDetails, GridColDef, GridColumnHeaderParams, GridFeatureMode, GridPaginationModel, GridRowIdGetter, GridValidRowModel, gridClasses } from "@mui/x-data-grid";
 import { StyledChip } from "./StyledChip";
 import { BoldBox } from "./BoldBox";
+import { formatDateAndTime } from "../utils/dateUtils";
+import { DateBox } from "./DateBox";
 
 const ODD_OPACITY = 0.2;
 
@@ -12,27 +14,6 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
             backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY),
             '@media (hover: none)': {
                 backgroundColor: 'transparent',
-            },
-        },
-        '&.Mui-selected': {
-            backgroundColor: alpha(
-                theme.palette.primary.main,
-                ODD_OPACITY + theme.palette.action.selectedOpacity,
-            ),
-            '&:hover, &.Mui-hovered': {
-                backgroundColor: alpha(
-                    theme.palette.primary.main,
-                    ODD_OPACITY +
-                    theme.palette.action.selectedOpacity +
-                    theme.palette.action.hoverOpacity,
-                ),
-                // Reset on touch devices, it doesn't add specificity
-                '@media (hover: none)': {
-                    backgroundColor: alpha(
-                        theme.palette.primary.main,
-                        ODD_OPACITY + theme.palette.action.selectedOpacity,
-                    ),
-                },
             },
         },
     },
@@ -61,12 +42,16 @@ const renderHeader = (params: GridColumnHeaderParams) => {
 export const StyledDataGrid = ({
     columns = [
         {
-            field: 'username', headerName: 'User', flex: 1, renderHeader, renderCell: (params: any) => {
+            field: 'username', headerName: 'Username', flex: 1, renderHeader, renderCell: (params: any) => {
 
                 return (<BoldBox>{(params.value) ? params.value : 'NA'}</BoldBox>);
             },
         },
-        { field: 'dateAndTime', headerName: 'Date & Time', flex: 1, renderHeader },
+        {
+            field: 'dateAndTime', headerName: 'Date & Time', flex: 1, renderHeader, renderCell: (params: any) => {
+                return (<DateBox>{formatDateAndTime(params.value)}</DateBox>);
+            }
+        },
         {
             field: 'status',
             headerName: 'Status',
