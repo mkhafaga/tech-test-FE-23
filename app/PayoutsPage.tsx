@@ -4,6 +4,7 @@ import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { PageState, Payout, PayoutsWithMetadata } from './types/Payout';
 import { paginatePayouts, searchPayouts } from './services/PayoutsService';
 import { StyledDataGrid } from './components/StyledDataGrid';
+import { useDebounce } from './utils/useDebounce';
 
 const PayoutsPage = () => {
 
@@ -76,9 +77,11 @@ const PayoutsPage = () => {
         }
     };
 
+    const debouncedSearchText = useDebounce(pageState.searchText, 500);
+
     useEffect(() => {
         fetchData();
-    }, [pageState.page, pageState.pageSize, pageState.searchText]);
+    }, [pageState.page, pageState.pageSize, debouncedSearchText]);
 
     return (
         <div>
@@ -112,32 +115,6 @@ const PayoutsPage = () => {
                     </div>
                 </div>
                 <div>
-
-                    {/* <StripedDataGrid
-                        autoHeight
-                        density='compact'
-                        getRowClassName={(params) =>
-                            params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
-                        }
-                        columns={columns}
-                        rows={pageState.data ?? []}
-                        rowCount={pageState.total}
-                        pagination
-                        paginationMode={pageState.paginationMode}
-                        paginationModel={{ page: pageState.page, pageSize: pageState.pageSize }}
-                        pageSizeOptions={[10, 20, 30, 100]}
-                        getRowId={(row) => {
-                            return row.id
-                        }}
-                        onPaginationModelChange={(newModel) => {
-                            console.log('newModel is ', newModel);
-                            setPageState((prevState) => ({
-                                ...prevState,
-                                page: newModel.page,
-                                pageSize: newModel.pageSize
-                            }));
-                        }}
-                        loading={pageState.isLoading}></StripedDataGrid> */}
                     <StyledDataGrid
                         getRowClassName={(params) =>
                             params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
