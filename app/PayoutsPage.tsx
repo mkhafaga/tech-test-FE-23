@@ -34,16 +34,7 @@ const COLUMNS = [
     },
 ];
 
-// interface PayoutsPageProps {
-//     initialPageState: PageState;
-//     initialFetch?: boolean;
-// }
-
-export default function PayoutsPage({
-                                        initialPageState,
-                                    }: {
-    initialPageState: PageState,
-}) {
+export default function PayoutsPage({initialPageState,}: { initialPageState: PageState, }) {
     const initialFetch = useRef(true);
     const [searchText, setSearchText] = useState('');
     const debouncedSearchText = useDebounce(searchText, 1000);
@@ -51,17 +42,15 @@ export default function PayoutsPage({
     const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
     const [loading, setLoading] = useState(false);
     const [pageState, setPageState] = useState<PageState>(initialPageState);
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const paginationMode: GridFeatureMode = !!searchText ? 'client' : 'server';
+    const [showErrorSnackBar, setShowErrorSnackBar] = useState(false);
     const cacheGet = useCache<Payout[]>();
-
+    const paginationMode: GridFeatureMode = !!searchText ? 'client' : 'server';
     const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
         setPage(0);
         setSearchText(event.target.value);
     };
 
     const fetchData = async () => {
-        console.log('bla bla');
         try {
             setLoading(true);
             if (paginationMode === 'client') {
@@ -78,7 +67,7 @@ export default function PayoutsPage({
                 });
             }
         } catch (error) {
-            setSnackbarOpen(true);
+            setShowErrorSnackBar(true);
             console.error(error);
         } finally {
             setLoading(false);
@@ -87,7 +76,6 @@ export default function PayoutsPage({
 
     useEffect(() => {
         if (initialFetch.current) {
-            console.log('initial fetch');
             initialFetch.current = false;
         } else {
             console.log('fetching');
@@ -97,10 +85,10 @@ export default function PayoutsPage({
 
     return <div>
         {/*TODO styled + Alert */}
-        {snackbarOpen && <Snackbar
+        {showErrorSnackBar && <Snackbar
             open
             autoHideDuration={6000}
-            onClose={() => setSnackbarOpen(false)}
+            onClose={() => setShowErrorSnackBar(false)}
             message="Error completing your request!"
         />}
         <h1>Payouts</h1>
@@ -131,6 +119,7 @@ export default function PayoutsPage({
                 </div>
             </div>
             <StyledDataGrid
+                data-testid="payouts-grid"
                 columns={COLUMNS}
                 data-role="grid"
                 rows={pageState.data ?? []}

@@ -1,5 +1,8 @@
 import { Payout, PayoutsWithMetadata } from "../types/Payout";
 
+const PAYOUTS_LIST_API_URL= process.env.NEXT_PUBLIC_PAYOUTS_LIST_API_URL || 'https://theseus-staging.lithium.ventures/api/v1/analytics/tech-test/payouts';
+const PAYOUTS_SEARCH_API_URL= process.env.NEXT_PUBLIC_PAYOUTS_SEARCH_API_URL || 'https://theseus-staging.lithium.ventures/api/v1/analytics/tech-test/search';
+
 /**
  * Implement PaypoutService. The service function is responsible for listing payouts by fetching https://theseus-staging.lithium.ventures/api/v1/analytics/tech-test/payouts
  * and returning the data.
@@ -10,9 +13,7 @@ export const paginatePayouts = async (
   page = 1,
   limit = 10
 ): Promise<PayoutsWithMetadata> => {
-  const url = new URL(
-      "https://theseus-staging.lithium.ventures/api/v1/analytics/tech-test/payouts",
-  );
+  const url = new URL(PAYOUTS_LIST_API_URL);
   url.searchParams.append("page", page.toString());
   url.searchParams.append("limit", limit.toString());
 
@@ -33,9 +34,7 @@ export const paginatePayouts = async (
  * @returns {Promise<Payout[]>}
  */
 export const searchPayouts = async (query: string): Promise<Payout[]> => {
-  const url = new URL(
-    "https://theseus-staging.lithium.ventures/api/v1/analytics/tech-test/search"
-  );
+  const url = new URL(PAYOUTS_SEARCH_API_URL);
   url.searchParams.append("query", query);
   const response = await fetch(url.toString());
   const data = await response.json();
