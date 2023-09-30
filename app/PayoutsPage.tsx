@@ -1,43 +1,29 @@
 'use client'
 import React from 'react';
-import {TextField} from '@mui/material';
 import {ChangeEvent, useEffect, useRef, useState} from 'react';
 import {PageState, Payout, PayoutsWithMetadata} from './types';
 import {paginatePayouts, searchPayouts} from './services/PayoutsService';
-import {StyledDataGrid} from './components/StyledDataGrid';
+import StyledDataGrid from './components/StyledDataGrid';
 import {useDebounce} from './hooks/useDebounce';
 import {GridFeatureMode} from "@mui/x-data-grid";
-import {Snackbar} from "@mui/material";
+import {Snackbar, Alert} from "@mui/material";
 import useCache from "./hooks/useCache";
+import StyledHeader from "@/app/components/StyledHeader";
+import StyledRootBox from "@/app/components/StyledRootBox";
+import WidgetTitle from "@/app/components/WidgetTitle";
+import StyledSearchField from "@/app/components/StyledSearchField";
+import {COLUMNS} from '@/app/utils/tableCoumns'
+import SubContainer from "@/app/components/SubContainer";
 
-const DEFAULT_PAGE_SIZE = 10;
-const COLUMNS = [
-    {
-        field: 'username',
-        headerName: 'Username',
-        type: 'username',
-    },
-    {
-        field: 'dateAndTime',
-        headerName: 'Date & Time',
-        type: 'dateAndTime',
-    },
-    {
-        field: 'status',
-        headerName: 'Status',
-        type: 'status',
-    },
-    {
-        field: 'value',
-        headerName: 'Value',
-        type: 'value',
-    },
-];
+const DEFAULT_DEBOUNCE_TIME: number = 1000;
+const DEFAULT_PAGE_SIZE: number = 10;
+const DEFAULT_PAGE_INDEX: number = 0;
+
 
 export default function PayoutsPage({initialPageState,}: { initialPageState: PageState, }) {
     const initialFetch = useRef(true);
     const [searchText, setSearchText] = useState('');
-    const debouncedSearchText = useDebounce(searchText, 1000);
+    const debouncedSearchText = useDebounce(searchText, DEFAULT_DEBOUNCE_TIME);
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
     const [loading, setLoading] = useState(false);
@@ -46,7 +32,7 @@ export default function PayoutsPage({initialPageState,}: { initialPageState: Pag
     const cacheGet = useCache<Payout[]>();
     const paginationMode: GridFeatureMode = !!searchText ? 'client' : 'server';
     const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setPage(0);
+        setPage(DEFAULT_PAGE_INDEX);
         setSearchText(event.target.value);
     };
 
@@ -78,46 +64,20 @@ export default function PayoutsPage({initialPageState,}: { initialPageState: Pag
         if (initialFetch.current) {
             initialFetch.current = false;
         } else {
-            console.log('fetching');
             (async () => await fetchData())();
         }
     }, [page, pageSize, debouncedSearchText]);
 
-    return <div>
-        {/*TODO styled + Alert */}
-        {showErrorSnackBar && <Snackbar
-            open
-            autoHideDuration={6000}
-            onClose={() => setShowErrorSnackBar(false)}
-            message="Error completing your request!"
-        />}
-        <h1>Payouts</h1>
-        <div style={{flexDirection: 'column', marginLeft: '40px', marginRight: '40px'}}>
-            <div id='subContainer' style={{display: 'flex'}}>
-                <div style={{display: 'flex', flexDirection: 'row', flex: '1', alignItems: 'center'}}>
-                    <div style={{
-                        backgroundColor: 'rgba(153, 157, 255, 1)',
-                        width: '18px',
-                        height: '35px',
-                        borderRadius: '3px',
-                        marginRight: '15px'
-                    }}></div>
-                    <h4>Payout History</h4>
-                </div>
-                <div style={{display: 'flex', flexDirection: 'row', flex: '1', justifyContent: 'flex-end'}}>
-                    <TextField
-                        data-role="searchbox"
-                        size='small'
-                        id="filled-search"
-                        label="Search username"
-                        type="search"
-                        variant="outlined"
-                        value={searchText}
-                        onChange={handleSearchChange}
-                        autoComplete='off'
-                    />
-                </div>
-            </div>
+    return (<>
+        {showErrorSnackBar && <Snackbar open autoHideDuration={6000} onClose={() => setShowErrorSnackBar(false)}>
+            <Alert severity="error">Error completing your request!</Alert>
+        </Snackbar>}
+        <StyledHeader value='Payouts' />
+        <StyledRootBox>
+            <SubContainer>
+                <WidgetTitle />
+                <StyledSearchField value={searchText} onChange={handleSearchChange}/>
+            </SubContainer>
             <StyledDataGrid
                 data-testid="payouts-grid"
                 columns={COLUMNS}
@@ -133,6 +93,6 @@ export default function PayoutsPage({initialPageState,}: { initialPageState: Pag
                 })}
                 loading={loading}
             />
-        </div>
-    </div>;
+        </StyledRootBox>
+    </>);
 };

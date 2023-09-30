@@ -1,13 +1,23 @@
-import { alpha, styled } from "@mui/material";
-import { DataGrid, GridCallbackDetails, GridColDef, GridColumnHeaderParams, GridFeatureMode, GridPaginationModel, GridRowIdGetter, GridValidRowModel, gridClasses } from "@mui/x-data-grid";
-import { StyledChip } from "./StyledChip";
-import { BoldBox } from "./BoldBox";
-import { formatDateAndTime } from "../utils/dateUtils";
-import { DateBox } from "./DateBox";
+import {alpha, styled} from "@mui/material";
+import {
+    DataGrid,
+    GridCallbackDetails,
+    GridColDef,
+    GridColumnHeaderParams,
+    GridFeatureMode,
+    GridPaginationModel,
+    GridRowIdGetter,
+    GridValidRowModel,
+    gridClasses
+} from "@mui/x-data-grid";
+import StyledChip from "./StyledChip";
+import BoldBox from "./BoldBox";
+import {formatDateAndTime} from "../utils/dateUtils";
+import DateBox from "./DateBox";
 
 const ODD_OPACITY = 0.2;
 
-const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
+const StripedDataGrid = styled(DataGrid)(({theme}) => ({
     [`& .${gridClasses.row}.even`]: {
         backgroundColor: theme.palette.grey[50],
         '&:hover, &.Mui-hovered': {
@@ -23,8 +33,8 @@ interface GrayHeaderProps {
     headerName: string | undefined;
 }
 
-const GrayHeader = ({ headerName }: GrayHeaderProps) => {
-    const StyledHeader = styled('div')(({ theme }) => ({
+const GrayHeader = ({headerName}: GrayHeaderProps) => {
+    const StyledHeader = styled('div')(({theme}) => ({
         color: theme.palette.grey[500],
     }));
     return (
@@ -33,20 +43,20 @@ const GrayHeader = ({ headerName }: GrayHeaderProps) => {
 };
 export const renderHeader = (params: GridColumnHeaderParams) => {
     return (
-        <GrayHeader headerName={params.colDef.headerName} />
+        <GrayHeader headerName={params.colDef.headerName}/>
     );
 }
 
-export const StyledDataGrid = ({
-    columns,
-    rows,
-    rowCount,
-    paginationMode,
-    paginationModel,
-    getRowId,
-    onPaginationModelChange,
-    loading,
-}: {
+const StyledDataGrid = ({
+                                   columns,
+                                   rows,
+                                   rowCount,
+                                   paginationMode,
+                                   paginationModel,
+                                   getRowId,
+                                   onPaginationModelChange,
+                                   loading,
+                               }: {
     columns: GridColDef<GridValidRowModel>[]
     rows: readonly GridValidRowModel[],
     rowCount: number | undefined,
@@ -77,7 +87,7 @@ export const StyledDataGrid = ({
                 } else if (column.type === 'status') {
                     renderCell = (params: any) => {
                         const child = params.value === 'Completed' ? 'Paid' : 'Pending';
-                        return (<StyledChip value={params.value} >{child}</StyledChip>);
+                        return (<StyledChip value={params.value}>{child}</StyledChip>);
                     }
                 } else {
                     renderCell = (params: any) => {
@@ -103,3 +113,5 @@ export const StyledDataGrid = ({
             loading={loading}></StripedDataGrid>
     );
 };
+
+export default StyledDataGrid;
