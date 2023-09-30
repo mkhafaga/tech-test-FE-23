@@ -31,39 +31,14 @@ const GrayHeader = ({ headerName }: GrayHeaderProps) => {
         <StyledHeader>{headerName}</StyledHeader>
     );
 };
-
-const renderHeader = (params: GridColumnHeaderParams) => {
+export const renderHeader = (params: GridColumnHeaderParams) => {
     return (
         <GrayHeader headerName={params.colDef.headerName} />
     );
-
 }
 
 export const StyledDataGrid = ({
-    columns = [
-        {
-            field: 'username', headerName: 'Username', flex: 1, renderHeader, renderCell: (params: any) => {
-
-                return (<BoldBox>{(params.value) ? params.value : 'NA'}</BoldBox>);
-            },
-        },
-        {
-            field: 'dateAndTime', headerName: 'Date & Time', flex: 1, renderHeader, renderCell: (params: any) => {
-                return (<DateBox>{formatDateAndTime(params.value)}</DateBox>);
-            }
-        },
-        {
-            field: 'status',
-            headerName: 'Status',
-            flex: 1,
-            renderHeader,
-            renderCell: (params: any) => {
-                const child = params.value === 'Completed' ? 'Paid' : 'Pending';
-                return (<StyledChip value={params.value} >{child}</StyledChip>);
-            }
-        },
-        { field: 'value', headerName: 'Value', flex: 1, renderHeader, renderCell: (params: any) => { return (<BoldBox>{params.value}</BoldBox>); } },
-    ],
+    columns,
     rows,
     rowCount,
     paginationMode,
@@ -71,9 +46,8 @@ export const StyledDataGrid = ({
     getRowId,
     onPaginationModelChange,
     loading,
-
 }: {
-    columns: GridColDef<GridValidRowModel>[],
+    columns: GridColDef<GridValidRowModel>[]
     rows: readonly GridValidRowModel[],
     rowCount: number | undefined,
     paginationMode: GridFeatureMode | undefined,
@@ -85,12 +59,39 @@ export const StyledDataGrid = ({
     return (
         <StripedDataGrid
             autoHeight
-            // density="compact"
+            density="compact"
             getRowClassName={(params) =>
                 params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
             }
             rowSelection={false}
-            columns={columns}
+            columns={columns.map((column) => {
+                let renderCell;
+                if (column.type === 'username') {
+                    renderCell = (params: any) => {
+                        return (<BoldBox>{params.value || 'NA'}</BoldBox>);
+                    }
+                } else if (column.type === 'dateAndTime') {
+                    renderCell = (params: any) => {
+                        return (<DateBox>{formatDateAndTime(params.value)}</DateBox>);
+                    }
+                } else if (column.type === 'status') {
+                    renderCell = (params: any) => {
+                        const child = params.value === 'Completed' ? 'Paid' : 'Pending';
+                        return (<StyledChip value={params.value} >{child}</StyledChip>);
+                    }
+                } else {
+                    renderCell = (params: any) => {
+                        return (<BoldBox>{params.value}</BoldBox>);
+                    }
+                }
+                return {
+                    flex: 1,
+                    field: column.field,
+                    headerName: column.headerName,
+                    renderHeader,
+                    renderCell,
+                }
+            })}
             rows={rows}
             rowCount={rowCount}
             pagination

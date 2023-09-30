@@ -5,6 +5,11 @@ export interface Payout {
   value: string;
 }
 
+export interface CacheEntry<T> {
+  entry: T;
+  cachedAt: Date;
+}
+
 export interface Metadata {
   page: number;
   limit: number;
@@ -17,13 +22,9 @@ export interface PayoutsWithMetadata {
 }
 
 export interface PageState {
-  data: Payout[] | undefined;
+  data: Payout[];
   total: number;
-  isLoading: boolean;
-  page: number;
-  pageSize: number;
-  searchText: string;
-  paginationMode: string;
+  isInitial?: boolean;
 }
 
 // export { Payout, Metadata, PayoutsWithMetadata };

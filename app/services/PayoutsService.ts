@@ -11,12 +11,18 @@ export const paginatePayouts = async (
   limit = 10
 ): Promise<PayoutsWithMetadata> => {
   const url = new URL(
-    "https://theseus-staging.lithium.ventures/api/v1/analytics/tech-test/payouts"
+      "https://theseus-staging.lithium.ventures/api/v1/analytics/tech-test/payouts",
   );
   url.searchParams.append("page", page.toString());
   url.searchParams.append("limit", limit.toString());
-  const response = await fetch(url.toString());
+
+  const response = await fetch(url.toString(), {'cache': 'no-store'});
   const data = await response.json();
+  // add unique ids
+  data.data = data.data.map((item: object, id: number) => ({
+    id,
+    ...item
+  }));
   return data;
 };
 
@@ -33,5 +39,8 @@ export const searchPayouts = async (query: string): Promise<Payout[]> => {
   url.searchParams.append("query", query);
   const response = await fetch(url.toString());
   const data = await response.json();
-  return data;
+  return data.map((item: object, id: number) => ({
+    id,
+    ...item
+  }));
 };
