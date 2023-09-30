@@ -1,133 +1,131 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import {render, screen, fireEvent, waitFor} from '@testing-library/react';
 import PayoutsPage from '../app/PayoutsPage';
 import '@testing-library/jest-dom'
-import {Payout} from "../app/types";
-import { searchPayouts, paginatePayouts } from '../app/services/PayoutsService';
+import {searchPayouts, paginatePayouts} from '../app/services/PayoutsService';
 
-const payout =  {   id: 1,
-    username: 'Khafaga',
-    status: 'Completed',
-    dateAndTime: '2023-09-14T00:00:00.000Z',
-    value: '$12',
-};
-
-const payouts =[
-    {   id: 1,
-        username: 'Khafaga',
+const payouts = [
+    {
+        id: 1,
+        username: 'mo',
         status: 'Completed',
         dateAndTime: '2023-09-14T00:00:00.000Z',
-        value: '$12',
+        value: '$2312',
     },
-    {   id: 2,
-        username: 'Khafaga',
+    {
+        id: 2,
+        username: 'khafaga',
         status: 'Completed',
         dateAndTime: '2023-09-14T00:00:00.000Z',
-        value: '$12',
+        value: '$1342',
     },
-    {   id: 3,
-        username: 'Khafaga',
-        status: 'Completed',
+    {
+        id: 3,
+        username: 'tom',
+        status: 'Pending',
         dateAndTime: '2023-09-14T00:00:00.000Z',
-        value: '$12',
+        value: '$14442',
     },
-    {   id: 4,
-        username: 'Khafaga',
-        status: 'Completed',
+    {
+        id: 4,
+        username: 'william',
+        status: 'Pending',
         dateAndTime: '2023-09-14T00:00:00.000Z',
-        value: '$12',
+        value: '$12344',
     },
-    {   id: 5,
-        username: 'Khafaga',
+    {
+        id: 5,
+        username: 'james',
         status: 'Completed',
         dateAndTime: '2023-09-14T00:00:00.000Z',
-        value: '$12',
+        value: '$1882',
     },
-    {   id: 6,
+    {
+        id: 6,
         username: 'Khafaga',
         status: 'Completed',
         dateAndTime: '2023-09-14T00:00:00.000Z',
-        value: '$12',
-    },{   id: 7,
-        username: 'Khafaga',
+        value: '$1562',
+    }, {
+        id: 7,
+        username: 'george',
         status: 'Completed',
         dateAndTime: '2023-09-14T00:00:00.000Z',
-        value: '$12',
-    },{   id: 8,
-        username: 'Khafaga',
+        value: '$1342',
+    }, {
+        id: 8,
+        username: 'paul',
         status: 'Completed',
         dateAndTime: '2023-09-14T00:00:00.000Z',
-        value: '$12',
+        value: '$1862',
     },
-    {   id: 9,
-        username: 'Khafaga',
+    {
+        id: 9,
+        username: 'carmen',
         status: 'Completed',
         dateAndTime: '2023-09-14T00:00:00.000Z',
-        value: '$12',
-    },{   id: 10,
-        username: 'Khafaga',
+        value: '$19882',
+    }, {
+        id: 10,
+        username: 'julia',
         status: 'Completed',
         dateAndTime: '2023-09-14T00:00:00.000Z',
-        value: '$12',
+        value: '$1342',
     },
-    {   id: 11,
-        username: 'Khafaga',
+    {
+        id: 11,
+        username: 'paula',
         status: 'Completed',
         dateAndTime: '2023-09-14T00:00:00.000Z',
-        value: '$12',
+        value: '$15662',
     },
-
-
 
 ];
 jest.mock('../app/services/PayoutsService', () => ({
-    paginatePayouts: jest.fn(() => Promise.resolve({ data: [
-            payout
-        ], metadata: { totalCount: 1 } })),
-    searchPayouts: jest.fn(() => Promise.resolve([payout])),
+    paginatePayouts: jest.fn(() => Promise.resolve({
+        data: [
+            payouts[payouts.length - 1]
+        ], metadata: {totalCount: 1}
+    })),
+    searchPayouts: jest.fn(() => Promise.resolve([payouts[0]])),
 }));
 
 describe('PayoutsPage', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
 
     it('renders the data grid', () => {
         render(<PayoutsPage
             initialPageState={{
-                data: [payout as Payout],
-                total: 1,
+                data: payouts,
+                total: payouts.length
             }}
         />);
         const dataGrid = screen.getByRole('grid');
+        // Assert
         expect(dataGrid).toBeInTheDocument();
     });
 
     it('calls paginatePayouts with the correct arguments when the page changes', async () => {
+        // Arrange
         render(<PayoutsPage initialPageState={{
             data: payouts,
             total: payouts.length,
         }}/>);
-        const pageButton = screen.getByRole('button', { name: /next page/i });
+        const pageButton = screen.getByRole('button', {name: /next page/i});
+        // Act
         fireEvent.click(pageButton);
+        // Assert
         await waitFor(() => expect(paginatePayouts).toHaveBeenCalledWith(1, 10));
     });
 
     it('calls searchPayouts with the correct arguments when the search text changes', async () => {
+        // Arrange
         render(<PayoutsPage initialPageState={{
-            data: [{
-                id: 1,
-                username: 'Khafaga',
-                status: 'Completed',
-                dateAndTime: '2023-09-14T00:00:00.000Z',
-                value: '$12',
-            } as Payout],
+            data: [payouts[0]],
             total: 1,
         }}/>);
-
-
         const searchField = screen.getByRole('searchbox');
-        console.log(`searchField is: ${searchField}`);
-        fireEvent.change(searchField, { target: { value: 'test' } });
-        await waitFor(() => expect(searchPayouts).toHaveBeenCalledWith('test'), { timeout: 2000 });
+        // Act
+        fireEvent.change(searchField, {target: {value: 'test'}});
+        // Assert
+        await waitFor(() => expect(searchPayouts).toHaveBeenCalledWith('test'), {timeout: 2000});
     });
 });
