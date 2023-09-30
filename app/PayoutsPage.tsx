@@ -2,7 +2,7 @@
 import React from 'react';
 import {TextField} from '@mui/material';
 import {ChangeEvent, useEffect, useRef, useState} from 'react';
-import {PageState, Payout, PayoutsWithMetadata} from './types/Payout';
+import {PageState, Payout, PayoutsWithMetadata} from './types';
 import {paginatePayouts, searchPayouts} from './services/PayoutsService';
 import {StyledDataGrid} from './components/StyledDataGrid';
 import {useDebounce} from './hooks/useDebounce';

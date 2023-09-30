@@ -1,6 +1,6 @@
 import PayoutsPage from "./PayoutsPage";
 import {paginatePayouts} from "@/app/services/PayoutsService";
-import {PayoutsWithMetadata} from "@/app/types/Payout";
+import {PayoutsWithMetadata} from "@/app/types";
 
 export default async function Home() {
   const paginatedData: PayoutsWithMetadata = await paginatePayouts(1, 10);

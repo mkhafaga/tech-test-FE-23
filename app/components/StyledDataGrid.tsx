@@ -53,7 +53,7 @@ export const StyledDataGrid = ({
     paginationMode: GridFeatureMode | undefined,
     paginationModel: GridPaginationModel | undefined,
     getRowId: GridRowIdGetter<GridValidRowModel> | undefined,
-    onPaginationModelChange: ((model: GridPaginationModel, details: GridCallbackDetails<any>) => void) | undefined,
+    onPaginationModelChange: ((model: GridPaginationModel, details: GridCallbackDetails) => void) | undefined,
     loading: boolean | undefined
 }) => {
     return (

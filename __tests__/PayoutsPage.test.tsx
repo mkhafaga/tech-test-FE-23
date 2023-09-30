@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import PayoutsPage from '../app/PayoutsPage';
 import '@testing-library/jest-dom'
-import {Payout} from "../app/types/Payout";
+import {Payout} from "../app/types";
 import { searchPayouts, paginatePayouts } from '../app/services/PayoutsService';
 
 const payout =  {   id: 1,
