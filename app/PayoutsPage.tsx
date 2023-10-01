@@ -87,10 +87,10 @@ export default function PayoutsPage({initialPageState,}: { initialPageState: Pag
                 paginationMode={paginationMode}
                 paginationModel={{page, pageSize}}
                 getRowId={(row) => row.id}
-                onPaginationModelChange={(({page, pageSize}) => {
+                onPaginationModelChange={({page, pageSize}) => {
                     setPage(page);
                     setPageSize(pageSize);
-                })}
+                }}
                 loading={loading}
             />
         </StyledRootBox>

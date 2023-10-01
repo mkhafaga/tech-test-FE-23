@@ -1,12 +1,18 @@
-import {Link} from "@mui/material";
+'use client'
+
+import StyledHeader from "@/app/components/StyledHeader";
+import CenteredContainer from "@/app/components/CenteredContainer";
+import BoldBox from "@/app/components/BoldBox";
+import HomeLink from "@/app/components/HomeLink";
 
 const NotFound = () => {
-    return (
-        <div>
-            <h2>Not Found</h2>
-            <p>Could not find requested resource</p>
-            <Link href="/">Return Home</Link>
-        </div>
+    return (<>
+            <StyledHeader value='Not Found'/>
+            <CenteredContainer id='centContain'>
+                <BoldBox>Could not find requested resource</BoldBox>
+                <HomeLink value='Return to Home'/>
+            </CenteredContainer>
+        </>
     )
 }
 
